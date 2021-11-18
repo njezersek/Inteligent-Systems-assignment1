@@ -41,11 +41,19 @@ generate_agent <- function(){
     if (variable == n_numbers) break
     indices[variable * 2] <- operator_indices[o_index <- o_index + 1]
   }
-  print(array(unlist(indices)))
-  indices # or array(unlist(indices))
+  # print(array(unlist(indices)))
+  array(unlist(indices))
+}
+```
+
+```{r}
+fitness <- function(a) {
+  a <- numbers_and_operators[generate_agent()]
+  print(a)
+  eval(parse(text=paste(a, collapse='')))
 }
 
-generate_agent()
+fitness(agent)
 ```
 
 ```{r}
