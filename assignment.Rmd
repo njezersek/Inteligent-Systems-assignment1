@@ -29,13 +29,23 @@ indices
 ```
 ```{r}
 generate_agent <- function(){
-    operator_indices <- round(runif(n_numbers-1, operator_min, operator_max))
-    number_indices <- sample( 1:(operator_min-1), 5)
-    indices <- c()
-    for (variable in 1:length(number_indices)) {
-      
-    }
+  operator_indices <- round(runif(n_numbers-1, operator_min, operator_max))
+  number_indices <- sample( 1:(operator_min-1), 5)
+  indices <- vector(mode="list", length=9)
+  o_index <- 0
+  for (variable in 1:n_numbers) {
+    # for setting the numbers
+    indices[2 * variable - 1] <- number_indices[variable]
+    
+    # for setting operators
+    if (variable == n_numbers) break
+    indices[variable * 2] <- operator_indices[o_index <- o_index + 1]
+  }
+  print(array(unlist(indices)))
+  indices # or array(unlist(indices))
 }
+
+generate_agent()
 ```
 
 ```{r}
