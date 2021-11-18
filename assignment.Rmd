@@ -42,14 +42,14 @@ generate_agent <- function(){
 ```
 
 ```{r}
-fitness <- function(a) {
-  a <- numbers_and_operators[generate_agent()]
+fitness <- function(agent) {
+  a <- numbers_and_operators[agent]
   print(a)
   val <- eval(parse(text=paste(a, collapse='')))
   abs(val - final_value)
 }
 
-fitness(agent)
+fitness(generate_agent())
 ```
 
 ```{r}
