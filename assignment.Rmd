@@ -1,0 +1,45 @@
+---
+title: "Assignment1"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Libraries
+```{r}
+library(GA)
+```
+
+## Population
+
+```{r}
+f <- function(x) 
+{
+  y <- (0.46 * (dnorm(x, -1, 2/3) + dnorm(x, 1, 2/3)) +
+          (1/300) * (dnorm(x, -0.5, 0.01) + dnorm(x, -1, 0.01) +
+                       dnorm(x, -1.5, 0.01)) +
+          (7/300) * (dnorm(x, 0.5, 0.07) + dnorm(x, 1, 0.07) +
+                       dnorm(x, 1.5, 0.07)))
+  
+  y ### return(y)
+}
+curve(f, from = -3, to = 3, n = 1000)
+
+```
+```{r}
+GA <- ga(type = "real-valued", fitness = f, lower = -3, upper = 3)
+plot(GA)
+```
+```{r}
+summary(GA)
+```
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
