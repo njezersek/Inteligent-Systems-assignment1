@@ -17,16 +17,11 @@ numbers_and_operators <- c("10", "25", "100", "5", "3", "+", "-", "/", "*")
 operator_min = 6
 operator_max = 9
 n_numbers = 5
-x = c(3, 9, 2, 6, 1, 6, 4, 7, 5)
-numbers_and_operators[x]
+final_value = 2512
+# x = c(3, 9, 2, 6, 1, 6, 4, 7, 5)
+# numbers_and_operators[x]
 ```
-```{r}
-round(runif(n_numbers-1, operator_min, operator_max))
-```
-```{r}
-indices <- vector(mode="list", length=9)
-indices
-```
+
 ```{r}
 generate_agent <- function(){
   operator_indices <- round(runif(n_numbers-1, operator_min, operator_max))
@@ -50,7 +45,8 @@ generate_agent <- function(){
 fitness <- function(a) {
   a <- numbers_and_operators[generate_agent()]
   print(a)
-  eval(parse(text=paste(a, collapse='')))
+  val <- eval(parse(text=paste(a, collapse='')))
+  abs(val - final_value)
 }
 
 fitness(agent)
