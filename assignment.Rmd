@@ -24,16 +24,13 @@ final_value <- 2512
 ```{r}
 generate_agent <- function() {
   operator_indices <- round(runif(n_numbers - 1, operator_min, operator_max))
-  number_indices <- sample(1:(operator_min - 1), n_numbers)
-  indices <- vector(mode = "list", length = (n_numbers * 2 - 1))
-  o_index <- 0
-  for (variable in 1:n_numbers) {
-    # for setting the numbers
-    indices[2 * variable - 1] <- number_indices[variable]
-    # for setting operators
-    if (variable != n_numbers)
-      indices[variable * 2] <- operator_indices[o_index <- o_index + 1]
-  }
+  number_indices <- sample(1:n_numbers, n_numbers)
+  n <- n_numbers * 2 - 1
+
+  indices <- vector(mode = "list", length = n)
+  indices[seq(1, n, 2)] <- number_indices
+  indices[seq(2, n, 2)] <- operator_indices
+
   array(unlist(indices))
 }
 ```
@@ -42,12 +39,15 @@ generate_agent <- function() {
 ```{r}
 fitness <- function(agent) {
   a <- numbers_and_operators[agent]
-  print(a)
   val <- eval(parse(text = paste(a, collapse = "")))
   abs(val - final_value)
 }
+```
 
-fitness(generate_agent())
+```{r}
+agent <- generate_agent()
+print(numbers_and_operators[agent])
+fitness(agent)
 ```
 
 ## Mutation function
