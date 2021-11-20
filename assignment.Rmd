@@ -65,14 +65,26 @@ my_mutation <- function(object, parent) {
 
 ## Crossover function
 ```{r}
+<<<<<<< HEAD
 my_crossover <- function(object, parent) {
 
+=======
+crossover <- function(object, parent) {
+  object
+>>>>>>> 92ffc90d7133ae2b9cd775266497d4e10a84c192
 }
 ```
 
 ```{r}
+<<<<<<< HEAD
 GA <- ga(type = "permutation", population = generate_agent, fitness = my_fitness,
           mutation = my_mutation,
           pcrossover = 0,
           popSize = 10, lower = 1, upper = 9)
 ```
+=======
+GA <- ga(type = "permutation", fitness = fitness, mutation = mutation, lower = 1, upper = 9)
+# plot(GA)
+# summary(GA)
+```
+>>>>>>> 92ffc90d7133ae2b9cd775266497d4e10a84c192
