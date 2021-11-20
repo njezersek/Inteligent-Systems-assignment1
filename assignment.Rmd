@@ -42,8 +42,7 @@ generate_agent <- function(object) {
 my_fitness <- function(agent) {
   a <- numbers_and_operators[agent]
   val <- eval(parse(text = paste(a, collapse = "")))
-
-  return(abs(val - final_value))
+  return(-abs(val - final_value))
 }
 ```
 
@@ -52,9 +51,10 @@ my_fitness <- function(agent) {
 my_mutation <- function(object, parent) {
   mutate <- parent <- as.vector(object@population[parent, ])
   n <- n_numbers * 2 - 1
-  rand <- round(runif(1, 0, 1)) # rand = 0 ali 1
+  rand <- round(runif(1, 0, 1)) # rand: 0 = number, 1 = operator
   swap <- seq(1 + rand, n, 2)   # 0 -> (1 3 5 7 9)    1 -> (2 4 6 8)
 
+  # swap 2 numbers / operators
   indexes <- sample(swap, 2)
   mutate[indexes[1]] <- parent[indexes[2]]
   mutate[indexes[2]] <- parent[indexes[1]]
@@ -65,26 +65,34 @@ my_mutation <- function(object, parent) {
 
 ## Crossover function
 ```{r}
-<<<<<<< HEAD
 my_crossover <- function(object, parent) {
+  pop <- object@population
+  n <- n_numbers * 2 - 1
+  p1 <- pop[parent[1], ]
+  p2 <- pop[parent[2], ]
+  children <- matrix(NA, nrow = 2, ncol = n)
+  children[1, ] <- p1
+  children[2, ] <- p2
 
-=======
-crossover <- function(object, parent) {
-  object
->>>>>>> 92ffc90d7133ae2b9cd775266497d4e10a84c192
+  ssize <- round(runif(1, 1, n_numbers - 1))
+  switch_indices <- sample(seq(2, n, 2), ssize)
+
+  children[1, switch_indices] <- p2[switch_indices]
+  children[2, switch_indices] <- p1[switch_indices]
+
+  return(list(children = children, fitness = rep(NA, 2)))
 }
 ```
 
 ```{r}
-<<<<<<< HEAD
-GA <- ga(type = "permutation", population = generate_agent, fitness = my_fitness,
+GA <- ga(type = "permutation", population = generate_agent,
+          fitness = my_fitness,
           mutation = my_mutation,
-          pcrossover = 0,
-          popSize = 10, lower = 1, upper = 9)
+          crossover = my_crossover,
+          maxFitness = 0,
+          maxiter = 500,
+
+          popSize = 256, lower = 1, upper = 9)
+summary(GA)
 ```
-=======
-GA <- ga(type = "permutation", fitness = fitness, mutation = mutation, lower = 1, upper = 9)
-# plot(GA)
-# summary(GA)
-```
->>>>>>> 92ffc90d7133ae2b9cd775266497d4e10a84c192
+
