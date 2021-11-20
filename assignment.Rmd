@@ -24,8 +24,8 @@ final_value <- 2512
 ```{r}
 generate_agent <- function() {
   operator_indices <- round(runif(n_numbers - 1, operator_min, operator_max))
-  number_indices <- sample(1:(operator_min - 1), 5)
-  indices <- vector(mode = "list", length = 9)
+  number_indices <- sample(1:(operator_min - 1), n_numbers)
+  indices <- vector(mode = "list", length = (n_numbers * 2 - 1))
   o_index <- 0
   for (variable in 1:n_numbers) {
     # for setting the numbers
@@ -50,6 +50,22 @@ fitness <- function(agent) {
 fitness(generate_agent())
 ```
 
+## Mutation function
+```{r}
+mutation <- function(object, parent) {
+  mutate <- parent <- as.vector(object@population[parent, ])
+  n <- n_numbers * 2 - 1
+  rand <- round(runif(1, 0, 1)) # rand = 0 ali 1
+  swap <- seq(1 + rand, n, 2)   # 0 -> (1 3 5 7 9)    1 -> (2 4 6 8)
+
+  indexes <- sample(swap, 2)
+  mutate[indexes[1]] <- parent[indexes[2]]
+  mutate[indexes[2]] <- parent[indexes[1]]
+
+  mutate
+}
+```
+
 ## Crossover function
 ```{r}
 crossover <- function(object, parent) {
@@ -57,23 +73,8 @@ crossover <- function(object, parent) {
 }
 ```
 
-## Mutation function
-```{r}
-mutation <- function(object, parent) {
-  
-}
-```
 ```{r}
 # GA <- ga(type = "real-valued", fitness = f, lower = -3, upper = 3)
 # plot(GA)
 # summary(GA)
 ```
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
