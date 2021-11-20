@@ -38,8 +38,12 @@ generate_agent <- function() {
 ## Fitness function
 ```{r}
 fitness <- function(agent) {
+  print(agent)
   a <- numbers_and_operators[agent]
-  val <- eval(parse(text = paste(a, collapse = "")))
+  expression = paste(a, collapse = "")
+  print(expression)
+  val <- eval(parse(text = expression))
+  print(paste(c(expression, " = ", val), collapse = ""))
   abs(val - final_value)
 }
 ```
@@ -69,12 +73,12 @@ mutation <- function(object, parent) {
 ## Crossover function
 ```{r}
 crossover <- function(object, parent) {
-
+  object
 }
 ```
 
 ```{r}
-# GA <- ga(type = "real-valued", fitness = f, lower = -3, upper = 3)
+GA <- ga(type = "permutation", fitness = fitness, mutation = mutation, crossover = crossover, lower = 1, upper = 9)
 # plot(GA)
 # summary(GA)
 ```
