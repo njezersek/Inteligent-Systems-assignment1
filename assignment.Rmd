@@ -22,30 +22,34 @@ final_value <- 2512
 
 ## Generate population
 ```{r}
-generate_agent <- function() {
-  operator_indices <- round(runif(n_numbers - 1, operator_min, operator_max))
-  number_indices <- sample(1:n_numbers, n_numbers)
+generate_agent <- function(object) {
   n <- n_numbers * 2 - 1
 
-  indices <- vector(mode = "list", length = n)
-  indices[seq(1, n, 2)] <- number_indices
-  indices[seq(2, n, 2)] <- operator_indices
+  indices <- matrix(NA, nrow = object@popSize, ncol = n)
+  for (i in 1:object@popSize) {
+    operator_indices <- round(runif(n_numbers - 1, operator_min, operator_max))
+    number_indices <- sample(1:n_numbers, n_numbers)
+    indices[i, seq(1, n, 2)] <- number_indices
+    indices[i, seq(2, n, 2)] <- operator_indices
+  }
 
-  paste(numbers_and_operators[array(unlist(indices))], collapse = "")
+  return(indices)
 }
 ```
 
 ## Fitness function
 ```{r}
-fitness <- function(agent) {
-  val <- eval(parse(text = agent))
-  abs(val - final_value)
+my_fitness <- function(agent) {
+  a <- numbers_and_operators[agent]
+  val <- eval(parse(text = paste(a, collapse = "")))
+
+  return(abs(val - final_value))
 }
 ```
 
 ## Mutation function
 ```{r}
-mutation <- function(object, parent) {
+my_mutation <- function(object, parent) {
   mutate <- parent <- as.vector(object@population[parent, ])
   n <- n_numbers * 2 - 1
   rand <- round(runif(1, 0, 1)) # rand = 0 ali 1
@@ -55,19 +59,20 @@ mutation <- function(object, parent) {
   mutate[indexes[1]] <- parent[indexes[2]]
   mutate[indexes[2]] <- parent[indexes[1]]
 
-  mutate
+  return(mutate)
 }
 ```
 
 ## Crossover function
 ```{r}
-crossover <- function(object, parent) {
+my_crossover <- function(object, parent) {
 
 }
 ```
 
 ```{r}
-GA <- ga(type = "permutation", fitness = fitness, mutation = mutation, lower = 1, upper = 9)
-# plot(GA)
-# summary(GA)
+GA <- ga(type = "permutation", population = generate_agent, fitness = my_fitness,
+          mutation = my_mutation,
+          pcrossover = 0,
+          popSize = 10, lower = 1, upper = 9)
 ```
