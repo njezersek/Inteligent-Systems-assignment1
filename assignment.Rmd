@@ -31,23 +31,16 @@ generate_agent <- function() {
   indices[seq(1, n, 2)] <- number_indices
   indices[seq(2, n, 2)] <- operator_indices
 
-  array(unlist(indices))
+  paste(numbers_and_operators[array(unlist(indices))], collapse = "")
 }
 ```
 
 ## Fitness function
 ```{r}
 fitness <- function(agent) {
-  a <- numbers_and_operators[agent]
-  val <- eval(parse(text = paste(a, collapse = "")))
+  val <- eval(parse(text = agent))
   abs(val - final_value)
 }
-```
-
-```{r}
-agent <- generate_agent()
-print(numbers_and_operators[agent])
-fitness(agent)
 ```
 
 ## Mutation function
@@ -74,7 +67,7 @@ crossover <- function(object, parent) {
 ```
 
 ```{r}
-# GA <- ga(type = "real-valued", fitness = f, lower = -3, upper = 3)
+GA <- ga(type = "permutation", fitness = fitness, mutation = mutation, lower = 1, upper = 9)
 # plot(GA)
 # summary(GA)
 ```
