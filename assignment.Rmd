@@ -94,5 +94,10 @@ GA <- ga(type = "permutation", population = generate_agent,
 
           popSize = 256, lower = 1, upper = 9)
 summary(GA)
+
+for (i in 1:nrow(GA@solution)) {
+  mat <- c(t(matrix(GA@solution[i, ])))
+  print(paste(numbers_and_operators[mat], collapse = ""))
+}
 ```
 
