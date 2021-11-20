@@ -14,64 +14,59 @@ library(GA)
 ## Population
 ```{r}
 numbers_and_operators <- c("10", "25", "100", "5", "3", "+", "-", "/", "*")
-operator_min = 6
-operator_max = 9
-n_numbers = 5
-final_value = 2512
-# x = c(3, 9, 2, 6, 1, 6, 4, 7, 5)
-# numbers_and_operators[x]
+operator_min <- 6
+operator_max <- 9
+n_numbers <- 5
+final_value <- 2512
 ```
 
+## Generate population
 ```{r}
-generate_agent <- function(){
-  operator_indices <- round(runif(n_numbers-1, operator_min, operator_max))
-  number_indices <- sample( 1:(operator_min-1), 5)
-  indices <- vector(mode="list", length=9)
+generate_agent <- function() {
+  operator_indices <- round(runif(n_numbers - 1, operator_min, operator_max))
+  number_indices <- sample(1:(operator_min - 1), 5)
+  indices <- vector(mode = "list", length = 9)
   o_index <- 0
   for (variable in 1:n_numbers) {
     # for setting the numbers
     indices[2 * variable - 1] <- number_indices[variable]
-    
     # for setting operators
-    if (variable == n_numbers) break
-    indices[variable * 2] <- operator_indices[o_index <- o_index + 1]
+    if (variable != n_numbers)
+      indices[variable * 2] <- operator_indices[o_index <- o_index + 1]
   }
-  # print(array(unlist(indices)))
   array(unlist(indices))
 }
 ```
 
+## Fitness function
 ```{r}
 fitness <- function(agent) {
   a <- numbers_and_operators[agent]
   print(a)
-  val <- eval(parse(text=paste(a, collapse='')))
+  val <- eval(parse(text = paste(a, collapse = "")))
   abs(val - final_value)
 }
 
 fitness(generate_agent())
 ```
 
+## Crossover function
 ```{r}
-f <- function(x) 
-{
-  y <- (0.46 * (dnorm(x, -1, 2/3) + dnorm(x, 1, 2/3)) +
-          (1/300) * (dnorm(x, -0.5, 0.01) + dnorm(x, -1, 0.01) +
-                       dnorm(x, -1.5, 0.01)) +
-          (7/300) * (dnorm(x, 0.5, 0.07) + dnorm(x, 1, 0.07) +
-                       dnorm(x, 1.5, 0.07)))
-  
-  y ### return(y)
-}
-curve(f, from = -3, to = 3, n = 1000)
+crossover <- function(object, parent) {
 
+}
+```
+
+## Mutation function
+```{r}
+mutation <- function(object, parent) {
+  
+}
 ```
 ```{r}
-GA <- ga(type = "real-valued", fitness = f, lower = -3, upper = 3)
-plot(GA)
-```
-```{r}
-summary(GA)
+# GA <- ga(type = "real-valued", fitness = f, lower = -3, upper = 3)
+# plot(GA)
+# summary(GA)
 ```
 ## Including Plots
 
