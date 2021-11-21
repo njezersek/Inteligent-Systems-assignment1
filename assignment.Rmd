@@ -65,9 +65,15 @@ Fitness function evaluates the expression and compares the result with
 `target_value`.
 ```{r}
 my_fitness <- function(agent) {
-  a <- numbers_and_operators[agent]
-  val <- eval(parse(text = paste(a, collapse = "")))
-  return(-abs(val - target_value))
+  expression <- numbers_and_operators[agent]
+  value <- eval(parse(text = paste(expression, collapse = "")))
+  return(-abs(value - target_value))
+}
+
+my_fitness_2 <- function(agent) {
+  expression <- numbers_and_operators[agent]
+  value <- eval(parse(text = paste(expression, collapse = "")))
+  return(1/abs((value - target_value)))
 }
 ```
 ## Print agent function
@@ -88,6 +94,7 @@ print_agent(agent)
 ```
 
 ## Mutation function
+Mutation my swap two numbers or two operators.
 ```{r}
 my_mutation <- function(object, parent) {
   mutate <- parent <- as.vector(object@population[parent, ])
@@ -105,6 +112,14 @@ my_mutation <- function(object, parent) {
 ```
 
 ## Crossover function
+Crossover takes two parents and produces two children. Each agent has 4 spots
+for operators and 5 spots for numbers. 
+
+#### Operator crossover
+Firstly some random operator spots are chosen and stored in the variable 
+`switch_indices`. Child one gets operators on this spots from first
+parent and other operators from second parent. Child two gets operators on this 
+spots from second parent and others from first.
 ```{r}
 my_crossover <- function(object, parent) {
   pop <- object@population
@@ -116,15 +131,28 @@ my_crossover <- function(object, parent) {
   children[2, ] <- p2
 
   ssize <- round(runif(1, 1, n_numbers - 1))
-  switch_indices <- sample(seq(2, n, 2), ssize)
+  operator_indices <- sample(seq(2, n, 2), ssize)
 
-  children[1, switch_indices] <- p2[switch_indices]
-  children[2, switch_indices] <- p1[switch_indices]
+  children[1, operator_indices] <- p2[operator_indices]
+  children[2, operator_indices] <- p1[operator_indices]
 
   return(list(children = children, fitness = rep(NA, 2)))
 }
 ```
 
+#### Number and operator crossover
+Expressions are treated like a permutation.
+
+Some consecutive random spots that begin with a number and end with symbol are 
+chosen and stored in a variable `indices`. Child one gets the beginning segment
+of the expression from parent one. Numbers that not yet present are copied from
+parent two together with the symbol right after them.
+
+For example:
+
+$$ \text{Parent 1: }\ \ \ 5\, /\, \underbrace{100+25\,-}_{selected}\, 3 \cdot 10  $$
+$$ \text{Parent 2: }\ \ \ \underbrace{3\, +\,}_{remaining} 25+ \underbrace{10 + 5 -}_{remaining} 100$$
+$$ \text{Child 1: }\ \ \ \underbrace{100+25\,-}_{P1} \underbrace{3+10+5}_{P2}$$
 ```{r}
 GA <- ga(type = "permutation", population = generate_population,
           fitness = my_fitness,
@@ -132,13 +160,47 @@ GA <- ga(type = "permutation", population = generate_population,
           crossover = my_crossover,
           maxFitness = 0,
           maxiter = 500,
-
-          popSize = 256, lower = 1, upper = 9)
+          popSize = 100, lower = 1, upper = 9)
 summary(GA)
 
 for (i in 1:nrow(GA@solution)) {
-  mat <- c(t(matrix(GA@solution[i, ])))
-  print(paste(numbers_and_operators[mat], collapse = ""))
+  a <- c(t(matrix(GA@solution[i, ])))
+  print_agent(a)
 }
 ```
+```{r}
+plot(GA)
+```
 
+## Random search
+This function just generates a random expression, checks if it has desired value
+and repeats.
+```{r}
+random_search <- function(){
+  found = FALSE
+  counter = 0
+  while(!found){
+    a = generate_agent()
+    counter <- counter + 1
+    if(my_fitness(a) == 0){
+      found = TRUE
+    }
+  }
+  return(list(agent=a, iterations=counter))
+}
+
+result = random_search()
+print_agent(result$agent)
+print(paste(c("Solution found in ", result$iterations, " iterations."), collapse = ""))
+```
+Let's see how many iterations does it take, on average, to guess the correct 
+expression.
+```{r}
+all_iterations = 0
+N = 100
+for (i in 1:N) {
+  result <- random_search()
+  all_iterations <- all_iterations + result$iterations
+}
+print(paste(c("On average solution was found in ", all_iterations/N, " iterations."), collapse = ""))
+```
